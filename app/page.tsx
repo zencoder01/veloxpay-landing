@@ -2,39 +2,31 @@
 
 import { useState } from 'react';
 import Hero from './components/hero';
-import TrustStrip from './components/trust-strip';
-import Features from './components/features';
+import ProblemStatement from './components/problem-statement';
 import HowItWorks from './components/how-it-works';
-import Developer from './components/developer';
-import UseCases from './components/use-cases';
-import Pricing from './components/pricing';
-import WaitlistCTA from './components/waitlist-cta';
-import WaitlistForm from './components/waitlist-form';
+import PaymentMethods from './components/payment-methods';
+import TrustNumbers from './components/trust-numbers';
+import DeveloperSection from './components/developer-section';
+import FAQ from './components/faq';
+import FinalCTA from './components/final-cta';
 import Footer from './components/footer';
+import WaitlistForm from './components/waitlist-form';
 
 export default function Home() {
   const [showWaitlist, setShowWaitlist] = useState(false);
 
-  const handleWaitlistOpen = () => {
-    setShowWaitlist(true);
-  };
-
-  const handleWaitlistClose = () => {
-    setShowWaitlist(false);
-  };
-
   return (
-    <main className="w-full bg-[#0f1629]">
-      <Hero onWaitlistClick={handleWaitlistOpen} />
-      <TrustStrip />
-      <Features />
+    <main className="w-full">
+      <Hero onWaitlistClick={() => setShowWaitlist(true)} />
+      <ProblemStatement />
       <HowItWorks />
-      <Developer />
-      <UseCases />
-      <Pricing onRequestAccess={handleWaitlistOpen} />
-      <WaitlistCTA onWaitlistClick={handleWaitlistOpen} />
+      <PaymentMethods />
+      <TrustNumbers />
+      <DeveloperSection />
+      <FAQ />
+      <FinalCTA onWaitlistClick={() => setShowWaitlist(true)} />
       <Footer />
-      <WaitlistForm isOpen={showWaitlist} onClose={handleWaitlistClose} />
+      <WaitlistForm isOpen={showWaitlist} onClose={() => setShowWaitlist(false)} />
     </main>
   );
 }

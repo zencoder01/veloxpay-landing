@@ -1,119 +1,111 @@
 'use client';
 
-import { X } from 'lucide-react';
 import { useState } from 'react';
+import { X, CheckCircle } from 'lucide-react';
 
-interface WaitlistFormProps {
+export default function WaitlistForm({
+  isOpen,
+  onClose,
+}: {
   isOpen: boolean;
   onClose: () => void;
-}
-
-export default function WaitlistForm({ isOpen, onClose }: WaitlistFormProps) {
+}) {
   const [email, setEmail] = useState('');
-  const [submitted, setSubmitted] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [success, setSuccess] = useState(false);
+  const [error, setError] = useState('');
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setIsLoading(true);
+    setError('');
 
-    // Simulate form submission
+    if (!email || !email.includes('@')) {
+      setError('Please enter a valid email');
+      return;
+    }
+
+    setLoading(true);
+
+    // Simulate API call
+    await new Promise(resolve => setTimeout(resolve, 1000));
+
+    setSuccess(true);
+    setLoading(false);
+
+    // Auto-close after 3 seconds
     setTimeout(() => {
-      setSubmitted(true);
-      setIsLoading(false);
-      setTimeout(() => {
-        setEmail('');
-        setSubmitted(false);
-        onClose();
-      }, 3000);
-    }, 1000);
+      onClose();
+      setEmail('');
+      setSuccess(false);
+    }, 3000);
   };
 
   if (!isOpen) return null;
 
   return (
-    <>
+    <div className="fixed inset-0 z-50 flex items-center justify-center">
       {/* Backdrop */}
       <div
-        className="fixed inset-0 bg-black/50 backdrop-blur-sm z-40 transition-opacity"
+        className="absolute inset-0 bg-black/50 backdrop-blur-sm"
         onClick={onClose}
       />
 
       {/* Modal */}
-      <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-md mx-auto z-50 px-4">
-        <div className="bg-gradient-to-br from-gray-900 to-gray-800 rounded-2xl border border-gray-700 shadow-2xl p-8">
-          {/* Close button */}
-          <button
-            onClick={onClose}
-            className="absolute top-4 right-4 text-gray-400 hover:text-white transition-colors"
-          >
-            <X className="w-6 h-6" />
-          </button>
+      <div className="relative z-10 w-full max-w-md mx-4 border border-line bg-bg-dark p-8 animate-slideInUp">
+        {/* Close Button */}
+        <button
+          onClick={onClose}
+          className="absolute top-4 right-4 text-secondary hover:text-accent-lime transition-colors"
+        >
+          <X size={24} />
+        </button>
 
-          {!submitted ? (
-            <div className="space-y-6">
+        {!success ? (
+          <>
+            <h2 className="text-3xl font-bold mb-2">Join the Future</h2>
+            <p className="text-secondary mb-8">
+              Get early access to veloxpay. API keys in 5 minutes.
+            </p>
+
+            <form onSubmit={handleSubmit} className="space-y-4">
               <div>
-                <h2 className="text-2xl font-bold text-white mb-2">
-                  Join the waitlist
-                </h2>
-                <p className="text-gray-400">
-                  Be the first to know when VeloxPay launches. Early access for startups.
-                </p>
+                <input
+                  type="email"
+                  placeholder="your@email.com"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  disabled={loading}
+                  className="w-full px-4 py-3 bg-bg-secondary/50 border border-line text-text-primary placeholder-text-secondary/50 focus:outline-none focus:border-accent-lime transition-colors disabled:opacity-50"
+                />
               </div>
 
-              <form onSubmit={handleSubmit} className="space-y-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-2">
-                    Email address
-                  </label>
-                  <input
-                    type="email"
-                    required
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    placeholder="you@company.com"
-                    className="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500/20 transition-all"
-                  />
-                </div>
+              {error && (
+                <p className="text-sm text-accent-orange">{error}</p>
+              )}
 
-                <button
-                  type="submit"
-                  disabled={isLoading}
-                  className="w-full px-4 py-3 bg-gradient-to-r from-green-400 to-cyan-400 text-[#0f1629] font-semibold rounded-lg hover:shadow-lg hover:shadow-green-500/50 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  {isLoading ? 'Joining...' : 'Join the waitlist'}
-                </button>
+              <button
+                type="submit"
+                disabled={loading}
+                className="w-full px-6 py-3 bg-accent-lime text-black font-bold border border-accent-lime hover:bg-yellow-300 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {loading ? 'Creating Account...' : 'Get Started'}
+              </button>
+            </form>
 
-                <p className="text-xs text-gray-500 text-center">
-                  We'll never spam you. Unsubscribe at any time.
-                </p>
-              </form>
-            </div>
-          ) : (
-            <div className="space-y-4 text-center">
-              <div className="w-12 h-12 rounded-full bg-green-500/20 border-2 border-green-400 mx-auto flex items-center justify-center">
-                <svg
-                  className="w-6 h-6 text-green-400"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M5 13l4 4L19 7"
-                  />
-                </svg>
-              </div>
-              <h3 className="text-xl font-bold text-white">You're on the list!</h3>
-              <p className="text-gray-400">
-                Check your email for confirmation. We'll be in touch soon.
-              </p>
-            </div>
-          )}
-        </div>
+            <p className="text-xs text-secondary/60 mt-6 text-center">
+              No credit card required. We'll send you an API key via email.
+            </p>
+          </>
+        ) : (
+          <div className="text-center py-8">
+            <CheckCircle size={48} className="text-accent-lime mx-auto mb-4" />
+            <h3 className="text-2xl font-bold mb-2">Welcome!</h3>
+            <p className="text-secondary">
+              Check your email for your API keys. You're all set to start collecting payments.
+            </p>
+          </div>
+        )}
       </div>
-    </>
+    </div>
   );
 }

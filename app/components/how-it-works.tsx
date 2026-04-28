@@ -1,67 +1,103 @@
 'use client';
 
-import { UserPlus, Link2, Zap } from 'lucide-react';
-
 export default function HowItWorks() {
   const steps = [
     {
-      number: '01',
-      icon: UserPlus,
-      title: 'Create your VeloxPay account',
-      description: 'Sign up in minutes with just your business details. No lengthy verification process.',
+      num: 1,
+      title: 'Merchant Initiates',
+      description: 'Send a payment request via API',
+      code: `POST /api/v1/transactions/initiate
+{
+  "amount": 50000,
+  "payerPhone": "+260976543210",
+  "paymentMethod": "mtn_momo"
+}
+
+→ Returns transactionId + expiryTime`,
     },
     {
-      number: '02',
-      icon: Link2,
-      title: 'Connect your business',
-      description: 'Verify your business information and set up your payment methods.',
+      num: 2,
+      title: 'Customer Authorizes',
+      description: 'Customer receives USSD prompt, enters PIN',
+      code: `Customer receives USSD prompt:
+*555# → Enter PIN on their phone
+veloxpay polls mtn api
+
+→ Real-time status via webhook`,
     },
     {
-      number: '03',
-      icon: Zap,
-      title: 'Start collecting payments',
-      description: 'Integrate the API or use our dashboard to accept payments immediately.',
+      num: 3,
+      title: 'Settlement',
+      description: 'Money lands in your account next day',
+      code: `Transaction completes
+veloxpay batches & settles
+Money lands in your account (T+1)
+
+→ Dashboard shows full audit trail`,
     },
   ];
 
   return (
-    <section className="w-full bg-gradient-to-b from-[#1a2847] to-[#0f1629] py-20 sm:py-32">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-16">
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white mb-6">
-            How it works
-          </h2>
-          <p className="text-gray-400 text-lg">
-            Get started in three simple steps
-          </p>
-        </div>
+    <section className="py-24 px-4 sm:px-6 lg:px-8 border-b border-line">
+      <div className="max-w-7xl mx-auto">
+        <h2 className="text-4xl sm:text-5xl font-bold mb-4">How It Works</h2>
+        <p className="text-secondary mb-16 max-w-2xl">Three simple steps to start accepting payments.</p>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {steps.map((step, idx) => {
-            const Icon = step.icon;
-            return (
-              <div key={idx} className="relative">
-                {/* Connector line */}
-                {idx < steps.length - 1 && (
-                  <div className="hidden md:block absolute top-24 left-1/2 w-1/2 h-0.5 bg-gradient-to-r from-cyan-500/50 to-transparent -ml-1/2 -mr-1/2" />
-                )}
+        {/* Vertical Staggered Steps */}
+        <div className="relative">
+          {/* Vertical Connector Line */}
+          <div className="hidden lg:block absolute left-20 top-0 bottom-0 w-px bg-border-line" />
 
-                <div className="relative z-10 flex flex-col items-center text-center">
-                  {/* Number circle */}
-                  <div className="w-16 h-16 rounded-full bg-gradient-to-br from-cyan-500/20 to-green-500/20 border-2 border-cyan-500/50 flex items-center justify-center mb-6">
-                    <span className="text-2xl font-bold text-cyan-400">{step.number}</span>
+          <div className="space-y-12 lg:space-y-16">
+            {steps.map((step, idx) => (
+              <div
+                key={idx}
+                className="relative grid grid-cols-1 lg:grid-cols-3 gap-8 lg:gap-16"
+                style={{
+                  animation: `slideInUp 0.6s ease-out ${0.2 + idx * 0.2}s both`,
+                }}
+              >
+                {/* Step Number */}
+                <div className="flex items-start">
+                  <div className="relative z-10 flex items-center justify-center w-12 h-12 bg-accent-lime text-black font-bold text-xl border border-accent-lime">
+                    {step.num}
                   </div>
+                </div>
 
-                  {/* Icon */}
-                  <Icon className="w-8 h-8 text-green-400 mb-4" />
+                {/* Text Content */}
+                <div className="lg:col-span-1">
+                  <h3 className="text-2xl font-bold mb-3">{step.title}</h3>
+                  <p className="text-secondary">{step.description}</p>
+                </div>
 
-                  {/* Content */}
-                  <h3 className="text-white font-semibold text-xl mb-3">{step.title}</h3>
-                  <p className="text-gray-400 leading-relaxed">{step.description}</p>
+                {/* Code Block */}
+                <div className="lg:col-span-1 border border-line bg-bg-secondary/50">
+                  <div className="p-4 font-mono text-sm leading-relaxed text-accent-lime whitespace-pre-wrap break-words overflow-x-auto">
+                    {step.code}
+                  </div>
                 </div>
               </div>
-            );
-          })}
+            ))}
+          </div>
+        </div>
+
+        {/* Integration Summary */}
+        <div className="mt-20 pt-12 border-t border-line grid grid-cols-1 sm:grid-cols-3 gap-8">
+          <div className="border border-line p-6 bg-bg-secondary/30">
+            <p className="font-mono text-xs uppercase tracking-widest text-secondary mb-3">Setup Time</p>
+            <p className="text-3xl font-bold text-accent-lime">5 min</p>
+            <p className="text-sm text-secondary mt-2">From signup to first payment</p>
+          </div>
+          <div className="border border-line p-6 bg-bg-secondary/30">
+            <p className="font-mono text-xs uppercase tracking-widest text-secondary mb-3">Time to Settlement</p>
+            <p className="text-3xl font-bold text-accent-lime">T+1</p>
+            <p className="text-sm text-secondary mt-2">Next business day</p>
+          </div>
+          <div className="border border-line p-6 bg-bg-secondary/30">
+            <p className="font-mono text-xs uppercase tracking-widest text-secondary mb-3">API Endpoints</p>
+            <p className="text-3xl font-bold text-accent-lime">14</p>
+            <p className="text-sm text-secondary mt-2">Full payment lifecycle</p>
+          </div>
         </div>
       </div>
     </section>
