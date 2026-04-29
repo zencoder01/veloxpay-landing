@@ -13,13 +13,15 @@ Current Phase 1 constraints:
 - Stub API-key auth only (`x-api-key` presence check)
 - No provider-side network calls yet
 
-## Phase 2: Persistence + Merchant Auth
-- Add Prisma + PostgreSQL (Neon) schema from `veloxpay-spec.md`
-- Replace in-memory store with DB-backed repositories
-- Merchant registration + API key issuance/rotation
-- Idempotency keys on create-payment endpoint
-- Structured error catalog and request correlation IDs
-- Add unit/integration tests for core payment flows
+## Phase 2: Persistence + Merchant Auth (In Progress)
+- ✅ Added Prisma + PostgreSQL schema in `prisma/schema.prisma`
+- ✅ Replaced in-memory store with DB-backed repositories
+- ✅ Added DB-backed merchant API key validation
+- ✅ Added seed script for initial merchant bootstrap
+- ⏳ Merchant registration + API key issuance/rotation
+- ⏳ Idempotency keys on create-payment endpoint
+- ⏳ Structured error catalog and request correlation IDs
+- ⏳ Unit/integration tests for core payment flows
 
 ## Phase 3: Provider Integrations + Settlement
 - MTN/Airtel/Zamtel adapters with retry and timeout policies

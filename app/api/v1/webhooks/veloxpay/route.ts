@@ -19,12 +19,17 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Invalid webhook signature." }, { status: 401 });
   }
 
-  const payload = JSON.parse(raw) as { transactionId?: string; status?: "successful" | "failed" };
+  let payload: { transactionId?: string; status?: "successful" | "failed" };
+  try {
+    payload = JSON.parse(raw) as { transactionId?: string; status?: "successful" | "failed" };
+  } catch {
+    return NextResponse.json({ error: "Invalid JSON payload." }, { status: 400 });
+  }
   if (!payload.transactionId || !payload.status) {
     return NextResponse.json({ error: "Invalid webhook payload." }, { status: 400 });
   }
 
-  const updated = setTransactionStatus(payload.transactionId, payload.status);
+  const updated = await setTransactionStatus(payload.transactionId, payload.status);
   if (!updated) {
     return NextResponse.json({ error: "Transaction not found." }, { status: 404 });
   }

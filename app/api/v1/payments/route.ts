@@ -4,18 +4,18 @@ import { createTransaction } from "@/lib/veloxpay/store";
 import { validateCreatePaymentPayload } from "@/lib/veloxpay/validators";
 
 export async function POST(req: NextRequest) {
-  const merchant = getMerchantContext(req);
+  const merchant = await getMerchantContext(req);
   if (!merchant.ok) {
     return NextResponse.json({ error: merchant.error }, { status: 401 });
   }
 
-  const body = await req.json();
+  const body = await req.json().catch(() => null);
   const validation = validateCreatePaymentPayload(body);
   if (!validation.valid) {
     return NextResponse.json({ error: validation.error }, { status: 400 });
   }
 
-  const tx = createTransaction(validation.data, merchant.merchantId);
+  const tx = await createTransaction(validation.data, merchant.merchantId);
 
   return NextResponse.json(
     {

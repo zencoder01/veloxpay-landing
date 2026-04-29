@@ -7,7 +7,7 @@ type Params = {
 
 export async function GET(_: Request, { params }: Params) {
   const { id } = await params;
-  const tx = getTransaction(id);
+  const tx = await getTransaction(id);
 
   if (!tx) {
     return NextResponse.json({ error: "Transaction not found." }, { status: 404 });

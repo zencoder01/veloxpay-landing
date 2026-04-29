@@ -1,0 +1,41 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Merchant {
+  id           String   @id @default(cuid())
+  businessName String
+  email        String   @unique
+  apiKeyHash   String   @unique
+  apiKeyPrefix String
+  country      String   @default("ZM")
+  kycStatus    String   @default("pending")
+  webhookUrl   String?
+  webhookSecret String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  transactions Transaction[]
+}
+
+model Transaction {
+  id          String   @id @default(cuid())
+  reference   String   @unique
+  amount      Int
+  currency    String
+  method      String
+  provider    String
+  status      String   @default("pending")
+  callbackUrl String?
+  metadata    Json?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  merchantId String
+  merchant   Merchant @relation(fields: [merchantId], references: [id], onDelete: Cascade)
+}
