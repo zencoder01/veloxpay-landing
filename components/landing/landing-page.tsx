@@ -16,6 +16,7 @@ import {
   Wallet,
   Webhook,
 } from "lucide-react";
+import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -124,10 +125,14 @@ export default function LandingPage() {
             ))}
           </nav>
           <div className="flex items-center gap-2">
-            <Button variant="ghost" size="sm">
-              Sign in
-            </Button>
-            <Button size="sm">Get started</Button>
+            <Link href="/signin">
+              <Button variant="ghost" size="sm">
+                Sign in
+              </Button>
+            </Link>
+            <Link href="/signup">
+              <Button size="sm">Get started</Button>
+            </Link>
           </div>
         </div>
       </header>
@@ -144,12 +149,16 @@ export default function LandingPage() {
             with a developer-friendly API.
           </p>
           <div className="flex flex-wrap gap-3">
-            <Button size="lg">
-              Start building <ArrowRight className="ml-2 size-4" />
-            </Button>
-            <Button size="lg" variant="outline">
-              View API docs
-            </Button>
+            <Link href="/signup">
+              <Button size="lg">
+                Start building <ArrowRight className="ml-2 size-4" />
+              </Button>
+            </Link>
+            <Link href="/developers">
+              <Button size="lg" variant="outline">
+                View API docs
+              </Button>
+            </Link>
           </div>
         </div>
 
@@ -333,12 +342,16 @@ export default function LandingPage() {
             Ready to make payments less painful?
           </h2>
           <div className="mt-6 flex flex-wrap gap-3">
-            <Button variant="outline" className="border-white bg-white text-[#14532d]">
-              Join waitlist
-            </Button>
-            <Button className="border border-[#bbf7d0] bg-[#14532d] hover:bg-[#0f3f23]">
-              Talk to us
-            </Button>
+            <Link href="/signup">
+              <Button variant="outline" className="border-white bg-white text-[#14532d]">
+                Join waitlist
+              </Button>
+            </Link>
+            <Link href="/contact">
+              <Button className="border border-[#bbf7d0] bg-[#14532d] hover:bg-[#0f3f23]">
+                Talk to us
+              </Button>
+            </Link>
           </div>
         </Card>
       </section>
