@@ -11,16 +11,20 @@ model Merchant {
   id           String   @id @default(cuid())
   businessName String
   email        String   @unique
+  passwordHash String
   apiKeyHash   String   @unique
   apiKeyPrefix String
   country      String   @default("ZM")
   kycStatus    String   @default("pending")
+  status       String   @default("trial")
+  mode         String   @default("test")
   webhookUrl   String?
   webhookSecret String?
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 
   transactions Transaction[]
+  idempotency  IdempotencyRecord[]
 }
 
 model Transaction {
@@ -38,4 +42,18 @@ model Transaction {
 
   merchantId String
   merchant   Merchant @relation(fields: [merchantId], references: [id], onDelete: Cascade)
+}
+
+model IdempotencyRecord {
+  id             String   @id @default(cuid())
+  merchantId     String
+  key            String
+  requestHash    String
+  responseStatus Int
+  responseBody   Json
+  createdAt      DateTime @default(now())
+
+  merchant Merchant @relation(fields: [merchantId], references: [id], onDelete: Cascade)
+
+  @@unique([merchantId, key])
 }

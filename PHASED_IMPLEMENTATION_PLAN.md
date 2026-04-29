@@ -1,27 +1,20 @@
 # VeloxPay Phased Implementation
 
-## Phase 1: API MVP Scaffold (Completed)
-- Next.js App Router API routes under `app/api/v1/*`
-- `POST /api/v1/payments` request validation and transaction creation
-- `GET /api/v1/transactions/:id` lookup endpoint
-- `POST /api/v1/webhooks/veloxpay` HMAC webhook verification
-- `GET /api/v1/health` service health endpoint
-- Domain types and utility modules in `lib/veloxpay/*`
+## Phase 1: Public Beta Safety Rails (Completed)
+- `POC_MODE` sandbox simulation responses (`sandbox_simulated`)
+- Idempotency-key support for `POST /api/v1/payments`
+- Basic in-memory rate limiting
+- Request IDs on key write endpoints
+- Existing API routes and webhook signing retained
 
-Current Phase 1 constraints:
-- In-memory transaction store only (non-persistent)
-- Stub API-key auth only (`x-api-key` presence check)
-- No provider-side network calls yet
+## Phase 2: Merchant Trial Flow (Completed)
+- ✅ Self-serve merchant signup endpoint
+- ✅ Merchant login endpoint (JWT issue)
+- ✅ Test API key generation on signup
+- ✅ DB-backed persistence and API-key validation
 
-## Phase 2: Persistence + Merchant Auth (In Progress)
-- ✅ Added Prisma + PostgreSQL schema in `prisma/schema.prisma`
-- ✅ Replaced in-memory store with DB-backed repositories
-- ✅ Added DB-backed merchant API key validation
-- ✅ Added seed script for initial merchant bootstrap
-- ⏳ Merchant registration + API key issuance/rotation
-- ⏳ Idempotency keys on create-payment endpoint
-- ⏳ Structured error catalog and request correlation IDs
-- ⏳ Unit/integration tests for core payment flows
+## Next: Phase 3
+- Hosted checkout + payment links + webhook retries + status timeline
 
 ## Phase 3: Provider Integrations + Settlement
 - MTN/Airtel/Zamtel adapters with retry and timeout policies
