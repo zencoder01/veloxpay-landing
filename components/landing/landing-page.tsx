@@ -92,19 +92,36 @@ const developerFeatures = [
 ];
 
 export default function LandingPage() {
+  const navLinks = [
+    { label: "Products", href: "/product" },
+    { label: "Developers", href: "/developers" },
+    { label: "Pricing", href: "/pricing" },
+    { label: "Security", href: "/security" },
+    { label: "Contact", href: "/contact" },
+  ];
+
+  const footerLinks = [
+    { label: "Product", href: "/product" },
+    { label: "Developers", href: "/developers" },
+    { label: "Security", href: "/security" },
+    { label: "Pricing", href: "/pricing" },
+    { label: "Contact", href: "/contact" },
+    { label: "Legal", href: "/legal" },
+    { label: "Privacy Policy", href: "/privacy-policy" },
+    { label: "Terms", href: "/terms" },
+  ];
+
   return (
     <main className="bg-[#f8faf8] text-[#111827]">
       <header className="sticky top-0 z-50 border-b border-[#e5e7eb]/90 bg-white/95 backdrop-blur">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
           <div className="text-lg font-semibold tracking-tight">VeloxPay</div>
           <nav className="hidden items-center gap-8 text-sm text-[#374151] md:flex">
-            {["Products", "Developers", "Pricing", "Security", "Contact"].map(
-              (item) => (
-                <a key={item} href="#" className="hover:text-[#111827]">
-                  {item}
-                </a>
-              )
-            )}
+            {navLinks.map((item) => (
+              <a key={item.label} href={item.href} className="hover:text-[#111827]">
+                {item.label}
+              </a>
+            ))}
           </nav>
           <div className="flex items-center gap-2">
             <Button variant="ghost" size="sm">
@@ -335,18 +352,9 @@ export default function LandingPage() {
             </p>
           </div>
           <div className="grid grid-cols-2 gap-3 text-sm text-[#374151] sm:grid-cols-4">
-            {[
-              "Product",
-              "Developers",
-              "Security",
-              "Pricing",
-              "Contact",
-              "Legal",
-              "Privacy Policy",
-              "Terms",
-            ].map((item) => (
-              <a key={item} href="#" className="hover:text-[#111827]">
-                {item}
+            {footerLinks.map((item) => (
+              <a key={item.label} href={item.href} className="hover:text-[#111827]">
+                {item.label}
               </a>
             ))}
           </div>
