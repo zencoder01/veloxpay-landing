@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 
 type AuthMode = "signup" | "signin";
 
@@ -10,6 +11,7 @@ type AuthFormProps = {
 };
 
 export default function AuthForm({ mode }: AuthFormProps) {
+  const router = useRouter();
   const [businessName, setBusinessName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -32,6 +34,18 @@ export default function AuthForm({ mode }: AuthFormProps) {
     });
     const data = await res.json();
     setOutput(JSON.stringify(data, null, 2));
+    if (res.ok) {
+      if (data.token) {
+        localStorage.setItem("veloxpay_token", data.token);
+      }
+      if (data.apiKey) {
+        localStorage.setItem("veloxpay_api_key", data.apiKey);
+      }
+      if (data.merchant) {
+        localStorage.setItem("veloxpay_merchant", JSON.stringify(data.merchant));
+      }
+      router.push("/dashboard");
+    }
     setLoading(false);
   }
 
