@@ -11,6 +11,8 @@ import {
 import { requestId } from "@/lib/veloxpay/request";
 import { env } from "@/lib/veloxpay/env";
 import { createWebhookDelivery } from "@/lib/veloxpay/webhook-delivery";
+import { evaluateRisk } from "@/lib/veloxpay/risk";
+import { writeAuditLog } from "@/lib/veloxpay/audit";
 
 export async function POST(req: NextRequest) {
   const reqId = requestId();
@@ -53,6 +55,32 @@ export async function POST(req: NextRequest) {
   }
 
   const tx = await createTransaction(validation.data, merchant.merchantId);
+  const risk = await evaluateRisk({
+    merchantId: merchant.merchantId,
+    amount: validation.data.amount,
+    customerPhone: validation.data.customer.phone,
+  });
+
+  if (risk.decision === "block") {
+    await writeAuditLog({
+      merchantId: merchant.merchantId,
+      actor: "api_key",
+      action: "payment.blocked_risk",
+      target: tx.id,
+      metadata: {
+        reason: risk.reasons.join(","),
+      },
+    });
+    return NextResponse.json(
+      {
+        error: "Payment blocked by risk policy.",
+        reasons: risk.reasons,
+        requestId: reqId,
+      },
+      { status: 403 }
+    );
+  }
+
   const simulatedStatus = env.pocMode
     ? tx.reference.charCodeAt(tx.reference.length - 1) % 5 === 0
       ? "failed"
@@ -71,6 +99,10 @@ export async function POST(req: NextRequest) {
     sandbox_simulated: env.pocMode,
     createdAt: tx.createdAt,
     requestId: reqId,
+    risk: {
+      decision: risk.decision,
+      reasons: risk.reasons,
+    },
   };
 
   if (idemKey) {
@@ -96,6 +128,19 @@ export async function POST(req: NextRequest) {
       },
     });
   }
+
+  await writeAuditLog({
+    merchantId: merchant.merchantId,
+    actor: "api_key",
+    action: "payment.created",
+    target: tx.id,
+    metadata: {
+      amount: tx.amount,
+      provider: tx.provider,
+      status: simulatedStatus,
+      risk: risk.decision,
+    },
+  });
 
   return NextResponse.json(responseBody, { status: 201 });
 }

@@ -50,6 +50,20 @@ Body example:
 ## Merchant login
 `POST /api/v1/merchants/login`
 
+## Audit logs (RBAC)
+`GET /api/v1/audit-logs`
+
+Headers:
+- `Authorization: Bearer <merchant_jwt>`
+
+Role behavior:
+- `owner` can access logs
+- `analyst` can access logs
+- lower roles are denied
+
+## Service status
+`GET /api/v1/status`
+
 ## Receive webhook callback
 `POST /api/v1/webhooks/veloxpay`
 

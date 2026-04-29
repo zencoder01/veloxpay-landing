@@ -18,6 +18,7 @@ model Merchant {
   kycStatus    String   @default("pending")
   status       String   @default("trial")
   mode         String   @default("test")
+  role         String   @default("owner")
   webhookUrl   String?
   webhookSecret String?
   createdAt    DateTime @default(now())
@@ -26,6 +27,7 @@ model Merchant {
   transactions Transaction[]
   idempotency  IdempotencyRecord[]
   paymentLinks PaymentLink[]
+  auditLogs    AuditLog[]
 }
 
 model Transaction {
@@ -99,4 +101,16 @@ model WebhookDelivery {
   updatedAt      DateTime @updatedAt
 
   transaction Transaction @relation(fields: [transactionId], references: [id], onDelete: Cascade)
+}
+
+model AuditLog {
+  id          String   @id @default(cuid())
+  merchantId  String
+  actor       String
+  action      String
+  target      String?
+  metadata    Json?
+  createdAt   DateTime @default(now())
+
+  merchant Merchant @relation(fields: [merchantId], references: [id], onDelete: Cascade)
 }
