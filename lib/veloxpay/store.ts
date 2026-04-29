@@ -17,6 +17,13 @@ export async function createTransaction(input: CreatePaymentRequest, merchantId:
       metadata: input.metadata,
     },
   });
+  await db.transactionEvent.create({
+    data: {
+      transactionId: tx.id,
+      type: "transaction.created",
+      detail: `Payment initialized via ${input.provider}.`,
+    },
+  });
 
   return mapTransaction(tx);
 }
@@ -34,8 +41,22 @@ export async function setTransactionStatus(id: string, status: PaymentStatus) {
     where: { id },
     data: { status },
   });
+  await db.transactionEvent.create({
+    data: {
+      transactionId: id,
+      type: "transaction.status_updated",
+      detail: `Status changed to ${status}.`,
+    },
+  });
 
   return mapTransaction(updated);
+}
+
+export async function getTransactionTimeline(id: string) {
+  return db.transactionEvent.findMany({
+    where: { transactionId: id },
+    orderBy: { createdAt: "asc" },
+  });
 }
 
 type DbTransaction = Awaited<ReturnType<typeof db.transaction.findUnique>>;

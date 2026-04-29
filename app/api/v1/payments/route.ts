@@ -10,6 +10,7 @@ import {
 } from "@/lib/veloxpay/idempotency";
 import { requestId } from "@/lib/veloxpay/request";
 import { env } from "@/lib/veloxpay/env";
+import { createWebhookDelivery } from "@/lib/veloxpay/webhook-delivery";
 
 export async function POST(req: NextRequest) {
   const reqId = requestId();
@@ -79,6 +80,20 @@ export async function POST(req: NextRequest) {
       requestHash: bodyHash,
       responseStatus: 201,
       responseBody,
+    });
+  }
+
+  if (validation.data.callbackUrl) {
+    await createWebhookDelivery({
+      transactionId: tx.id,
+      callbackUrl: validation.data.callbackUrl,
+      payload: {
+        transactionId: tx.id,
+        reference: tx.reference,
+        status: simulatedStatus,
+        amount: tx.amount,
+        currency: tx.currency,
+      },
     });
   }
 
